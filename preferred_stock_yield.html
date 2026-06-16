@@ -28,12 +28,43 @@
       box-shadow: 0 25px 50px rgba(0,0,0,0.4);
     }
 
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
     h1 {
       font-size: 1.4rem;
       font-weight: 700;
       color: #f1f5f9;
-      margin-bottom: 6px;
       letter-spacing: -0.3px;
+    }
+
+    .mode-toggle {
+      display: flex;
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .mode-btn {
+      padding: 5px 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: transparent;
+      color: #64748b;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: #6366f1;
+      color: #fff;
     }
 
     .subtitle {
@@ -58,11 +89,12 @@
 
     .input-wrapper {
       position: relative;
+      display: flex;
+      gap: 8px;
     }
 
-    .prefix {
+    .prefix, .suffix {
       position: absolute;
-      left: 14px;
       top: 50%;
       transform: translateY(-50%);
       color: #64748b;
@@ -71,23 +103,16 @@
       pointer-events: none;
     }
 
-    .suffix {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #64748b;
-      font-size: 1rem;
-      font-weight: 500;
-      pointer-events: none;
-    }
+    .prefix { left: 14px; }
+    .suffix { right: 14px; }
 
-    input[type="number"] {
+    input[type="number"],
+    input[type="text"] {
       width: 100%;
       background: #0f172a;
       border: 1.5px solid #334155;
       border-radius: 10px;
-      padding: 13px 44px;
+      padding: 13px 14px;
       color: #f1f5f9;
       font-size: 1.05rem;
       font-weight: 500;
@@ -97,13 +122,73 @@
     }
 
     input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-      -webkit-appearance: none;
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    input.has-prefix { padding-left: 36px; }
+    input.has-suffix { padding-right: 36px; }
+
+    input:focus { border-color: #6366f1; }
+
+    .fetch-btn {
+      flex-shrink: 0;
+      padding: 0 18px;
+      background: #6366f1;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
     }
 
-    input[type="number"]:focus {
-      border-color: #6366f1;
+    .fetch-btn:hover { background: #4f46e5; }
+    .fetch-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+
+    .stock-info-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 20px;
+      display: none;
     }
+
+    .stock-info-box.show { display: block; }
+
+    .stock-name {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+
+    .stock-name strong { color: #e2e8f0; }
+
+    .stock-highlight {
+      display: inline-block;
+      background: #1d4ed8;
+      color: #bfdbfe;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-top: 4px;
+    }
+
+    .error-box {
+      background: #450a0a;
+      border: 1px solid #7f1d1d;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.85rem;
+      color: #fca5a5;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .error-box.show { display: block; }
 
     .divider {
       border: none;
@@ -133,11 +218,6 @@
       color: #4ade80;
     }
 
-    .result-value.dim {
-      font-size: 1.4rem;
-      color: #94a3b8;
-    }
-
     .detail-row {
       display: flex;
       justify-content: space-between;
@@ -148,7 +228,6 @@
     }
 
     .detail-row:last-child { border-bottom: none; }
-
     .detail-key { color: #64748b; }
     .detail-val { color: #cbd5e1; font-weight: 600; }
 
@@ -178,29 +257,86 @@
       color: #475569;
       margin-top: 6px;
     }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
 <div class="card">
-  <h1>特別股殖利率計算器</h1>
-  <p class="subtitle">票面價值 $25 基準 &nbsp;|&nbsp; 輸入現價與股息率即時計算</p>
+  <div class="header">
+    <h1>特別股殖利率計算器</h1>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-manual" onclick="setMode('manual')">手動</button>
+      <button class="mode-btn" id="btn-auto" onclick="setMode('auto')">自動</button>
+    </div>
+  </div>
+  <p class="subtitle">票面價值 $25 基準 &nbsp;|&nbsp; 目前模式：<span id="mode-label">手動輸入</span></p>
 
-  <div class="input-group">
-    <label>現在市場價格</label>
-    <div class="input-wrapper">
-      <span class="prefix">$</span>
-      <input type="number" id="price" placeholder="例：24.50" step="0.01" min="0.01">
+  <!-- ── 手動模式 ── -->
+  <div id="panel-manual">
+    <div class="input-group">
+      <label>現在市場價格</label>
+      <div class="input-wrapper">
+        <span class="prefix">$</span>
+        <input type="number" id="m-price" class="has-prefix" placeholder="例：24.50" step="0.01" min="0.01">
+      </div>
+    </div>
+    <div class="input-group">
+      <label>票面股息率</label>
+      <div class="input-wrapper">
+        <input type="number" id="m-rate" class="has-suffix" placeholder="例：9.00" step="0.01" min="0.01">
+        <span class="suffix">%</span>
+      </div>
+      <p class="face-note">依票面 $25 計算固定配息金額</p>
     </div>
   </div>
 
-  <div class="input-group">
-    <label>票面股息率</label>
-    <div class="input-wrapper">
-      <input type="number" id="rate" placeholder="例：9.00" step="0.01" min="0.01" style="padding-right: 44px;">
-      <span class="suffix">%</span>
+  <!-- ── 自動模式 ── -->
+  <div id="panel-auto" style="display:none">
+    <div class="input-group">
+      <label>股票代號</label>
+      <div class="input-wrapper">
+        <input type="text" id="a-ticker" placeholder="例：ATLCZ、PSEC-A、GOODN" style="text-transform:uppercase">
+        <button class="fetch-btn" id="fetch-btn" onclick="fetchQuote()">查詢</button>
+      </div>
     </div>
-    <p class="face-note">依票面 $25 計算固定配息金額</p>
+
+    <div class="error-box" id="error-box"></div>
+
+    <div class="stock-info-box" id="stock-info">
+      <div class="stock-name" id="stock-name-text"></div>
+      <div id="rate-tag"></div>
+    </div>
+
+    <div id="auto-fields" style="display:none">
+      <div class="input-group">
+        <label>現在市場價格</label>
+        <div class="input-wrapper">
+          <span class="prefix">$</span>
+          <input type="number" id="a-price" class="has-prefix" step="0.01" min="0.01">
+        </div>
+      </div>
+      <div class="input-group" id="a-rate-group">
+        <label>票面股息率 <span style="color:#64748b;font-size:0.75rem;text-transform:none">（從名稱解析）</span></label>
+        <div class="input-wrapper">
+          <input type="number" id="a-rate" class="has-suffix" step="0.01" min="0.01">
+          <span class="suffix">%</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <hr class="divider">
@@ -211,37 +347,38 @@
 </div>
 
 <script>
-  const priceEl = document.getElementById('price');
-  const rateEl = document.getElementById('rate');
-  const output = document.getElementById('output');
+  let currentMode = 'manual';
 
+  /* ── 模式切換 ── */
+  function setMode(m) {
+    currentMode = m;
+    document.getElementById('panel-manual').style.display = m === 'manual' ? '' : 'none';
+    document.getElementById('panel-auto').style.display  = m === 'auto'   ? '' : 'none';
+    document.getElementById('btn-manual').classList.toggle('active', m === 'manual');
+    document.getElementById('btn-auto').classList.toggle('active', m === 'auto');
+    document.getElementById('mode-label').textContent = m === 'manual' ? '手動輸入' : '自動查詢';
+    resetOutput();
+  }
+
+  /* ── 結果渲染 ── */
   function getBadge(y) {
     if (y >= 8) return `<span class="badge badge-green">高殖利率</span>`;
     if (y >= 5) return `<span class="badge badge-yellow">中殖利率</span>`;
     return `<span class="badge badge-red">低殖利率</span>`;
   }
 
-  function calc() {
-    const price = parseFloat(priceEl.value);
-    const rate = parseFloat(rateEl.value);
-
-    if (!price || !rate || price <= 0 || rate <= 0) {
-      output.innerHTML = `<div class="empty-state">輸入數值後自動顯示結果</div>`;
-      return;
-    }
-
-    const annualDiv = 25 * (rate / 100);
-    const quarterDiv = annualDiv / 4;
+  function renderResult(price, rate) {
+    if (!price || !rate || price <= 0 || rate <= 0) { resetOutput(); return; }
+    const annualDiv    = 25 * (rate / 100);
+    const quarterDiv   = annualDiv / 4;
     const currentYield = (annualDiv / price) * 100;
-    const premium = ((price - 25) / 25) * 100;
-    const badge = getBadge(currentYield);
+    const premium      = ((price - 25) / 25) * 100;
 
-    output.innerHTML = `
+    document.getElementById('output').innerHTML = `
       <div class="result-block">
         <div class="result-label">目前殖利率</div>
-        <div class="result-value">${currentYield.toFixed(2)}%${badge}</div>
+        <div class="result-value">${currentYield.toFixed(2)}%${getBadge(currentYield)}</div>
       </div>
-
       <div class="result-block" style="margin-bottom:0">
         <div class="result-label">配息明細</div>
         <div class="detail-row">
@@ -262,12 +399,101 @@
             ${premium >= 0 ? '+' : ''}${premium.toFixed(2)}%
           </span>
         </div>
-      </div>
-    `;
+      </div>`;
   }
 
-  priceEl.addEventListener('input', calc);
-  rateEl.addEventListener('input', calc);
+  function resetOutput() {
+    document.getElementById('output').innerHTML = '<div class="empty-state">輸入數值後自動顯示結果</div>';
+  }
+
+  /* ── 手動模式監聽 ── */
+  ['m-price', 'm-rate'].forEach(id =>
+    document.getElementById(id).addEventListener('input', () => {
+      if (currentMode !== 'manual') return;
+      renderResult(
+        parseFloat(document.getElementById('m-price').value),
+        parseFloat(document.getElementById('m-rate').value)
+      );
+    })
+  );
+
+  /* ── 自動模式監聽 ── */
+  ['a-price', 'a-rate'].forEach(id =>
+    document.getElementById(id).addEventListener('input', () => {
+      if (currentMode !== 'auto') return;
+      renderResult(
+        parseFloat(document.getElementById('a-price').value),
+        parseFloat(document.getElementById('a-rate').value)
+      );
+    })
+  );
+
+  /* Enter 鍵觸發查詢 */
+  document.getElementById('a-ticker').addEventListener('keydown', e => {
+    if (e.key === 'Enter') fetchQuote();
+  });
+
+  /* ── 自動查詢 ── */
+  async function fetchQuote() {
+    const ticker = document.getElementById('a-ticker').value.trim().toUpperCase();
+    if (!ticker) return;
+
+    const btn       = document.getElementById('fetch-btn');
+    const errorBox  = document.getElementById('error-box');
+    const infoBox   = document.getElementById('stock-info');
+    const autoFields = document.getElementById('auto-fields');
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>查詢中';
+    errorBox.classList.remove('show');
+    infoBox.classList.remove('show');
+    autoFields.style.display = 'none';
+    resetOutput();
+
+    try {
+      const apiUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(ticker)}&fields=longName,shortName,regularMarketPrice`;
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+
+      const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(10000) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      const result = data?.quoteResponse?.result?.[0];
+
+      if (!result) throw new Error('找不到此股票代號');
+
+      const name  = result.longName || result.shortName || ticker;
+      const price = result.regularMarketPrice;
+
+      // 從名稱解析 %（取第一個出現的數字+%）
+      const rateMatch = name.match(/(\d+\.?\d*)\s*%/);
+      const parsedRate = rateMatch ? parseFloat(rateMatch[1]) : null;
+
+      // 顯示股票名稱
+      document.getElementById('stock-name-text').innerHTML =
+        `<strong>${ticker}</strong> &nbsp;—&nbsp; ${name}`;
+
+      document.getElementById('rate-tag').innerHTML = parsedRate
+        ? `<span class="stock-highlight">解析股息率：${parsedRate}%</span>`
+        : `<span style="color:#fbbf24;font-size:0.78rem;">⚠️ 名稱中未找到股息率，請手動輸入</span>`;
+
+      infoBox.classList.add('show');
+      autoFields.style.display = '';
+
+      // 預填欄位
+      document.getElementById('a-price').value = price ? price.toFixed(2) : '';
+      document.getElementById('a-rate').value  = parsedRate ? parsedRate : '';
+
+      if (price && parsedRate) renderResult(price, parsedRate);
+
+    } catch (err) {
+      errorBox.textContent = `查詢失敗：${err.message}`;
+      errorBox.classList.add('show');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '查詢';
+    }
+  }
 </script>
 
 </body>
