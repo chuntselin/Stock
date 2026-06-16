@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>特別股殖利率計算器</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 36px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin-bottom: 28px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .prefix {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 1rem;
+      font-weight: 500;
+      pointer-events: none;
+    }
+
+    .suffix {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 1rem;
+      font-weight: 500;
+      pointer-events: none;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      background: #0f172a;
+      border: 1.5px solid #334155;
+      border-radius: 10px;
+      padding: 13px 44px;
+      color: #f1f5f9;
+      font-size: 1.05rem;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
+
+    input[type="number"]:focus {
+      border-color: #6366f1;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #334155;
+      margin: 24px 0;
+    }
+
+    .result-block {
+      background: #0f172a;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+
+    .result-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .result-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #4ade80;
+    }
+
+    .result-value.dim {
+      font-size: 1.4rem;
+      color: #94a3b8;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #1e293b;
+      font-size: 0.88rem;
+    }
+
+    .detail-row:last-child { border-bottom: none; }
+
+    .detail-key { color: #64748b; }
+    .detail-val { color: #cbd5e1; font-weight: 600; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .badge-green { background: #166534; color: #4ade80; }
+    .badge-yellow { background: #713f12; color: #fbbf24; }
+    .badge-red { background: #7f1d1d; color: #f87171; }
+
+    .empty-state {
+      text-align: center;
+      color: #334155;
+      font-size: 0.9rem;
+      padding: 16px 0;
+    }
+
+    .face-note {
+      font-size: 0.78rem;
+      color: #475569;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h1>特別股殖利率計算器</h1>
+  <p class="subtitle">票面價值 $25 基準 &nbsp;|&nbsp; 輸入現價與股息率即時計算</p>
+
+  <div class="input-group">
+    <label>現在市場價格</label>
+    <div class="input-wrapper">
+      <span class="prefix">$</span>
+      <input type="number" id="price" placeholder="例：24.50" step="0.01" min="0.01">
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label>票面股息率</label>
+    <div class="input-wrapper">
+      <input type="number" id="rate" placeholder="例：9.00" step="0.01" min="0.01" style="padding-right: 44px;">
+      <span class="suffix">%</span>
+    </div>
+    <p class="face-note">依票面 $25 計算固定配息金額</p>
+  </div>
+
+  <hr class="divider">
+
+  <div id="output">
+    <div class="empty-state">輸入數值後自動顯示結果</div>
+  </div>
+</div>
+
+<script>
+  const priceEl = document.getElementById('price');
+  const rateEl = document.getElementById('rate');
+  const output = document.getElementById('output');
+
+  function getBadge(y) {
+    if (y >= 8) return `<span class="badge badge-green">高殖利率</span>`;
+    if (y >= 5) return `<span class="badge badge-yellow">中殖利率</span>`;
+    return `<span class="badge badge-red">低殖利率</span>`;
+  }
+
+  function calc() {
+    const price = parseFloat(priceEl.value);
+    const rate = parseFloat(rateEl.value);
+
+    if (!price || !rate || price <= 0 || rate <= 0) {
+      output.innerHTML = `<div class="empty-state">輸入數值後自動顯示結果</div>`;
+      return;
+    }
+
+    const annualDiv = 25 * (rate / 100);
+    const quarterDiv = annualDiv / 4;
+    const currentYield = (annualDiv / price) * 100;
+    const premium = ((price - 25) / 25) * 100;
+    const badge = getBadge(currentYield);
+
+    output.innerHTML = `
+      <div class="result-block">
+        <div class="result-label">目前殖利率</div>
+        <div class="result-value">${currentYield.toFixed(2)}%${badge}</div>
+      </div>
+
+      <div class="result-block" style="margin-bottom:0">
+        <div class="result-label">配息明細</div>
+        <div class="detail-row">
+          <span class="detail-key">票面年配息</span>
+          <span class="detail-val">$${annualDiv.toFixed(4)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">每季配息（估）</span>
+          <span class="detail-val">$${quarterDiv.toFixed(4)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">買入價格</span>
+          <span class="detail-val">$${price.toFixed(2)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">相對票面溢/折價</span>
+          <span class="detail-val" style="color:${premium >= 0 ? '#f87171' : '#4ade80'}">
+            ${premium >= 0 ? '+' : ''}${premium.toFixed(2)}%
+          </span>
+        </div>
+      </div>
+    `;
+  }
+
+  priceEl.addEventListener('input', calc);
+  rateEl.addEventListener('input', calc);
+</script>
+
+</body>
+</html>
