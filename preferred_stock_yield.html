@@ -433,14 +433,38 @@
     if (e.key === 'Enter') fetchQuote();
   });
 
-  /* ── 自動查詢 ── */
+  /* ── 自動查詢（多 proxy + 雙 API 備援） ── */
+  const PROXIES = [
+    url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+  ];
+
+  async function tryFetch(apiUrl) {
+    for (const makeProxy of PROXIES) {
+      try {
+        const res = await fetch(makeProxy(apiUrl), { signal: AbortSignal.timeout(7000) });
+        if (!res.ok) continue;
+        const text = await res.text();
+        const json = JSON.parse(text);
+        // v8 chart
+        const chart = json?.chart?.result?.[0];
+        if (chart) return { name: chart.meta?.longName || chart.meta?.shortName, price: chart.meta?.regularMarketPrice };
+        // v7 quote
+        const quote = json?.quoteResponse?.result?.[0];
+        if (quote) return { name: quote.longName || quote.shortName, price: quote.regularMarketPrice };
+      } catch (_) { /* try next */ }
+    }
+    return null;
+  }
+
   async function fetchQuote() {
     const ticker = document.getElementById('a-ticker').value.trim().toUpperCase();
     if (!ticker) return;
 
-    const btn       = document.getElementById('fetch-btn');
-    const errorBox  = document.getElementById('error-box');
-    const infoBox   = document.getElementById('stock-info');
+    const btn        = document.getElementById('fetch-btn');
+    const errorBox   = document.getElementById('error-box');
+    const infoBox    = document.getElementById('stock-info');
     const autoFields = document.getElementById('auto-fields');
 
     btn.disabled = true;
@@ -451,38 +475,29 @@
     resetOutput();
 
     try {
-      const apiUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(ticker)}&fields=longName,shortName,regularMarketPrice`;
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+      // 嘗試 v8 chart 再 v7 quote
+      const v8  = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}`;
+      const v7  = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(ticker)}`;
 
-      const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(10000) });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      let result = await tryFetch(v8);
+      if (!result) result = await tryFetch(v7);
+      if (!result) throw new Error('所有來源皆無法取得資料，請確認代號（如 ATLCZ、PSEC-A）');
 
-      const data = await res.json();
-      const result = data?.quoteResponse?.result?.[0];
-
-      if (!result) throw new Error('找不到此股票代號');
-
-      const name  = result.longName || result.shortName || ticker;
-      const price = result.regularMarketPrice;
-
-      // 從名稱解析 %（取第一個出現的數字+%）
-      const rateMatch = name.match(/(\d+\.?\d*)\s*%/);
+      const { name, price } = result;
+      const rateMatch  = (name || '').match(/(\d+\.?\d+)\s*%/);
       const parsedRate = rateMatch ? parseFloat(rateMatch[1]) : null;
 
-      // 顯示股票名稱
       document.getElementById('stock-name-text').innerHTML =
-        `<strong>${ticker}</strong> &nbsp;—&nbsp; ${name}`;
-
+        `<strong>${ticker}</strong> &nbsp;—&nbsp; ${name || '（名稱未知）'}`;
       document.getElementById('rate-tag').innerHTML = parsedRate
         ? `<span class="stock-highlight">解析股息率：${parsedRate}%</span>`
-        : `<span style="color:#fbbf24;font-size:0.78rem;">⚠️ 名稱中未找到股息率，請手動輸入</span>`;
+        : `<span style="color:#fbbf24;font-size:0.78rem;">⚠ 名稱中未找到股息率，請手動輸入</span>`;
 
       infoBox.classList.add('show');
       autoFields.style.display = '';
 
-      // 預填欄位
-      document.getElementById('a-price').value = price ? price.toFixed(2) : '';
-      document.getElementById('a-rate').value  = parsedRate ? parsedRate : '';
+      document.getElementById('a-price').value = price  ? price.toFixed(2) : '';
+      document.getElementById('a-rate').value  = parsedRate || '';
 
       if (price && parsedRate) renderResult(price, parsedRate);
 
