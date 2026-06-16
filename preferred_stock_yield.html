@@ -22,9 +22,9 @@
       background: #1e293b;
       border: 1px solid #334155;
       border-radius: 16px;
-      padding: 36px;
+      padding: 28px;
       width: 100%;
-      max-width: 480px;
+      max-width: 500px;
       box-shadow: 0 25px 50px rgba(0,0,0,0.4);
     }
 
@@ -33,13 +33,15 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 6px;
+      gap: 10px;
     }
 
     h1 {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: #f1f5f9;
       letter-spacing: -0.3px;
+      flex-shrink: 0;
     }
 
     .mode-toggle {
@@ -47,51 +49,44 @@
       background: #0f172a;
       border-radius: 8px;
       padding: 3px;
-      gap: 3px;
+      gap: 2px;
+      flex-shrink: 0;
     }
 
     .mode-btn {
-      padding: 5px 14px;
+      padding: 5px 11px;
       border: none;
       border-radius: 6px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
       background: transparent;
       color: #64748b;
       transition: all 0.2s;
+      white-space: nowrap;
     }
 
-    .mode-btn.active {
-      background: #6366f1;
-      color: #fff;
-    }
+    .mode-btn.active { background: #6366f1; color: #fff; }
 
     .subtitle {
       font-size: 0.82rem;
       color: #64748b;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
-    .input-group {
-      margin-bottom: 20px;
-    }
+    .input-group { margin-bottom: 18px; }
 
     label {
       display: block;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       font-weight: 600;
       color: #94a3b8;
-      margin-bottom: 8px;
+      margin-bottom: 7px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      gap: 8px;
-    }
+    .input-wrapper { position: relative; display: flex; gap: 8px; }
 
     .prefix, .suffix {
       position: absolute;
@@ -102,47 +97,40 @@
       font-weight: 500;
       pointer-events: none;
     }
-
     .prefix { left: 14px; }
     .suffix { right: 14px; }
 
-    input[type="number"],
-    input[type="text"] {
+    input[type="number"], input[type="text"] {
       width: 100%;
       background: #0f172a;
       border: 1.5px solid #334155;
       border-radius: 10px;
-      padding: 13px 14px;
+      padding: 12px 14px;
       color: #f1f5f9;
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 500;
       outline: none;
       transition: border-color 0.2s;
       -moz-appearance: textfield;
     }
-
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-
-    input.has-prefix { padding-left: 36px; }
-    input.has-suffix { padding-right: 36px; }
-
+    input.has-prefix { padding-left: 34px; }
+    input.has-suffix { padding-right: 34px; }
     input:focus { border-color: #6366f1; }
 
     .fetch-btn {
       flex-shrink: 0;
-      padding: 0 18px;
+      padding: 0 16px;
       background: #6366f1;
       border: none;
       border-radius: 10px;
       color: #fff;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
-      white-space: nowrap;
     }
-
     .fetch-btn:hover { background: #4f46e5; }
     .fetch-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
 
@@ -150,27 +138,18 @@
       background: #0f172a;
       border: 1px solid #334155;
       border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 20px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
       display: none;
     }
-
     .stock-info-box.show { display: block; }
-
-    .stock-name {
-      font-size: 0.85rem;
-      color: #94a3b8;
-      line-height: 1.5;
-      margin-bottom: 6px;
-    }
-
+    .stock-name { font-size: 0.83rem; color: #94a3b8; line-height: 1.5; margin-bottom: 5px; }
     .stock-name strong { color: #e2e8f0; }
-
     .stock-highlight {
       display: inline-block;
       background: #1d4ed8;
       color: #bfdbfe;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 700;
       padding: 2px 8px;
       border-radius: 4px;
@@ -182,155 +161,197 @@
       border: 1px solid #7f1d1d;
       border-radius: 10px;
       padding: 12px 14px;
-      font-size: 0.85rem;
+      font-size: 0.83rem;
       color: #fca5a5;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       display: none;
+      line-height: 1.5;
     }
-
     .error-box.show { display: block; }
 
     .divider {
       border: none;
       border-top: 1px solid #334155;
-      margin: 24px 0;
+      margin: 20px 0;
     }
 
+    /* ── Manual/Auto result ── */
     .result-block {
       background: #0f172a;
       border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 14px;
+      padding: 18px;
+      margin-bottom: 12px;
     }
-
     .result-label {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
-
-    .result-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #4ade80;
-    }
-
+    .result-value { font-size: 2rem; font-weight: 700; color: #4ade80; }
     .detail-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 0;
+      padding: 9px 0;
       border-bottom: 1px solid #1e293b;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
     }
-
     .detail-row:last-child { border-bottom: none; }
     .detail-key { color: #64748b; }
     .detail-val { color: #cbd5e1; font-weight: 600; }
 
     .badge {
       display: inline-block;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: 999px;
-      margin-left: 8px;
+      margin-left: 7px;
       vertical-align: middle;
     }
-
-    .badge-green { background: #166534; color: #4ade80; }
+    .badge-green  { background: #166534; color: #4ade80; }
     .badge-yellow { background: #713f12; color: #fbbf24; }
-    .badge-red { background: #7f1d1d; color: #f87171; }
+    .badge-red    { background: #7f1d1d; color: #f87171; }
 
-    .empty-state {
-      text-align: center;
-      color: #334155;
-      font-size: 0.9rem;
-      padding: 16px 0;
-    }
-
-    .face-note {
-      font-size: 0.78rem;
-      color: #475569;
-      margin-top: 6px;
-    }
+    .empty-state { text-align: center; color: #334155; font-size: 0.88rem; padding: 16px 0; }
+    .face-note { font-size: 0.75rem; color: #475569; margin-top: 5px; }
 
     .spinner {
       display: inline-block;
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       border: 2px solid rgba(255,255,255,0.3);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
-      margin-right: 6px;
+      margin-right: 5px;
       vertical-align: middle;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Watchlist table ── */
+    .wl-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .wl-meta { font-size: 0.78rem; color: #64748b; }
+    .refresh-btn {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .refresh-btn:hover { background: #334155; color: #e2e8f0; }
+    .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .wl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    .wl-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+    .wl-table thead th {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      padding: 0 6px 9px;
+      border-bottom: 1px solid #334155;
+      white-space: nowrap;
+    }
+    .wl-table thead th:nth-child(n+3) { text-align: right; }
+    .wl-table tbody tr { border-bottom: 1px solid #1e293b; cursor: default; }
+    .wl-table tbody tr:last-child { border-bottom: none; }
+    .wl-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .wl-table td { padding: 9px 6px; vertical-align: middle; }
+    .wl-table td:nth-child(n+3) { text-align: right; }
+
+    .wl-rank { color: #475569; font-size: 0.72rem; padding-right: 2px; }
+    .wl-ticker { font-weight: 700; color: #e2e8f0; font-size: 0.82rem; white-space: nowrap; }
+    .wl-price { color: #94a3b8; font-size: 0.82rem; }
+    .wl-rate  { color: #94a3b8; font-size: 0.82rem; }
+    .wl-y-hi { color: #4ade80; font-weight: 700; }
+    .wl-y-md { color: #fbbf24; font-weight: 700; }
+    .wl-y-lo { color: #f87171; font-weight: 600; }
+    .wl-dash { color: #334155; }
+
+    .wl-loading {
+      text-align: center;
+      padding: 28px 0;
+      color: #64748b;
+      font-size: 0.88rem;
+    }
+    .wl-updated { font-size: 0.7rem; color: #334155; margin-top: 10px; text-align: right; }
   </style>
 </head>
 <body>
 
 <div class="card">
   <div class="header">
-    <h1>特別股殖利率計算器</h1>
+    <h1>特別股殖利率</h1>
     <div class="mode-toggle">
-      <button class="mode-btn active" id="btn-manual" onclick="setMode('manual')">手動</button>
-      <button class="mode-btn" id="btn-auto" onclick="setMode('auto')">自動</button>
+      <button class="mode-btn active" id="btn-manual"    onclick="setMode('manual')">手動</button>
+      <button class="mode-btn"        id="btn-auto"      onclick="setMode('auto')">自動</button>
+      <button class="mode-btn"        id="btn-watchlist" onclick="setMode('watchlist')">推薦</button>
     </div>
   </div>
-  <p class="subtitle">票面價值 $25 基準 &nbsp;|&nbsp; 目前模式：<span id="mode-label">手動輸入</span></p>
+  <p class="subtitle">票面 $25 基準 &nbsp;|&nbsp; <span id="mode-label">手動輸入</span></p>
 
-  <!-- ── 手動模式 ── -->
+  <!-- ── 手動 ── -->
   <div id="panel-manual">
     <div class="input-group">
-      <label>現在市場價格</label>
+      <label>市場現價</label>
       <div class="input-wrapper">
         <span class="prefix">$</span>
-        <input type="number" id="m-price" class="has-prefix" placeholder="例：24.50" step="0.01" min="0.01">
+        <input type="number" id="m-price" class="has-prefix" placeholder="24.50" step="0.01" min="0.01">
       </div>
     </div>
     <div class="input-group">
       <label>票面股息率</label>
       <div class="input-wrapper">
-        <input type="number" id="m-rate" class="has-suffix" placeholder="例：9.00" step="0.01" min="0.01">
+        <input type="number" id="m-rate" class="has-suffix" placeholder="9.00" step="0.01" min="0.01">
         <span class="suffix">%</span>
       </div>
-      <p class="face-note">依票面 $25 計算固定配息金額</p>
+      <p class="face-note">依票面 $25 計算固定配息</p>
     </div>
   </div>
 
-  <!-- ── 自動模式 ── -->
+  <!-- ── 自動 ── -->
   <div id="panel-auto" style="display:none">
     <div class="input-group">
       <label>股票代號</label>
       <div class="input-wrapper">
-        <input type="text" id="a-ticker" placeholder="例：ATLCZ、PSEC-A、GOODN" style="text-transform:uppercase">
-        <button class="fetch-btn" id="fetch-btn" onclick="fetchQuote()">查詢</button>
+        <input type="text" id="a-ticker" placeholder="例：ATLCZ、HWCPZ、JSM" style="text-transform:uppercase">
+        <button class="fetch-btn" id="fetch-btn" onclick="fetchSingle()">查詢</button>
       </div>
     </div>
-
     <div class="error-box" id="error-box"></div>
-
     <div class="stock-info-box" id="stock-info">
       <div class="stock-name" id="stock-name-text"></div>
       <div id="rate-tag"></div>
     </div>
-
     <div id="auto-fields" style="display:none">
       <div class="input-group">
-        <label>現在市場價格</label>
+        <label>市場現價</label>
         <div class="input-wrapper">
           <span class="prefix">$</span>
           <input type="number" id="a-price" class="has-prefix" step="0.01" min="0.01">
         </div>
       </div>
-      <div class="input-group" id="a-rate-group">
-        <label>票面股息率 <span style="color:#64748b;font-size:0.75rem;text-transform:none">（從名稱解析）</span></label>
+      <div class="input-group">
+        <label>股息率 <span style="color:#475569;text-transform:none;font-size:0.72rem">（從名稱解析）</span></label>
         <div class="input-wrapper">
           <input type="number" id="a-rate" class="has-suffix" step="0.01" min="0.01">
           <span class="suffix">%</span>
@@ -339,8 +360,8 @@
     </div>
   </div>
 
-  <hr class="divider">
-
+  <!-- ── 分隔線 + 結果 ── -->
+  <hr class="divider" id="main-divider">
   <div id="output">
     <div class="empty-state">輸入數值後自動顯示結果</div>
   </div>
@@ -348,19 +369,98 @@
 
 <script>
   let currentMode = 'manual';
+  let watchlistCache = null;
+
+  const WATCHLIST = [
+    'TRTN-G','UZF','SEAL-B','GLOP-A','ATLCZ',
+    'TEN-E','DCBG','FGN','APOS','ATHS',
+    'AQNB','MGRE','F-D','HWCPZ','AFGD','PBI-B','JSM'
+  ];
 
   /* ── 模式切換 ── */
   function setMode(m) {
     currentMode = m;
     document.getElementById('panel-manual').style.display = m === 'manual' ? '' : 'none';
-    document.getElementById('panel-auto').style.display  = m === 'auto'   ? '' : 'none';
-    document.getElementById('btn-manual').classList.toggle('active', m === 'manual');
-    document.getElementById('btn-auto').classList.toggle('active', m === 'auto');
-    document.getElementById('mode-label').textContent = m === 'manual' ? '手動輸入' : '自動查詢';
-    resetOutput();
+    document.getElementById('panel-auto').style.display   = m === 'auto'   ? '' : 'none';
+    document.getElementById('main-divider').style.display = m === 'watchlist' ? 'none' : '';
+
+    ['manual','auto','watchlist'].forEach(k =>
+      document.getElementById('btn-' + k).classList.toggle('active', k === m)
+    );
+    document.getElementById('mode-label').textContent =
+      { manual: '手動輸入', auto: '自動查詢', watchlist: '推薦標的' }[m];
+
+    if (m === 'watchlist') {
+      loadWatchlist();
+    } else {
+      resetOutput();
+    }
   }
 
-  /* ── 結果渲染 ── */
+  /* ── Proxy 列表 ── */
+  const PROXIES = [
+    u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+    u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+    u => `https://thingproxy.freeboard.io/fetch/${u}`,
+  ];
+
+  async function tryFetch(apiUrl) {
+    for (const mkProxy of PROXIES) {
+      try {
+        const res = await fetch(mkProxy(apiUrl), { signal: AbortSignal.timeout(8000) });
+        if (!res.ok) continue;
+        const text = await res.text();
+        if (!text || text[0] === '<') continue;
+        const json = JSON.parse(text);
+        // v8 chart
+        const chart = json?.chart?.result?.[0];
+        if (chart?.meta?.regularMarketPrice != null) return {
+          name:  chart.meta.longName || chart.meta.shortName,
+          price: chart.meta.regularMarketPrice
+        };
+        // v7 quote (single)
+        const q = json?.quoteResponse?.result?.[0];
+        if (q?.regularMarketPrice != null) return {
+          name:  q.longName || q.shortName,
+          price: q.regularMarketPrice
+        };
+      } catch (_) {}
+    }
+    return null;
+  }
+
+  async function tryBatchFetch(symbols) {
+    const url = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbols)}&fields=longName,shortName,regularMarketPrice`;
+    for (const mkProxy of PROXIES) {
+      try {
+        const res = await fetch(mkProxy(url), { signal: AbortSignal.timeout(15000) });
+        if (!res.ok) continue;
+        const text = await res.text();
+        if (!text || text[0] === '<') continue;
+        const json = JSON.parse(text);
+        const results = json?.quoteResponse?.result;
+        if (Array.isArray(results) && results.length > 0) return results;
+      } catch (_) {}
+    }
+    return null;
+  }
+
+  /* ── 殖利率計算 helpers ── */
+  function parseRate(name) {
+    const m = (name || '').match(/(\d+\.?\d+)\s*%/);
+    return m ? parseFloat(m[1]) : null;
+  }
+
+  function calcYield(price, rate) {
+    return (price && rate) ? (25 * rate / 100) / price * 100 : null;
+  }
+
+  function yieldClass(y) {
+    return y >= 9 ? 'wl-y-hi' : y >= 7 ? 'wl-y-md' : 'wl-y-lo';
+  }
+
+  /* ── 手動模式 ── */
   function getBadge(y) {
     if (y >= 8) return `<span class="badge badge-green">高殖利率</span>`;
     if (y >= 5) return `<span class="badge badge-yellow">中殖利率</span>`;
@@ -373,7 +473,6 @@
     const quarterDiv   = annualDiv / 4;
     const currentYield = (annualDiv / price) * 100;
     const premium      = ((price - 25) / 25) * 100;
-
     document.getElementById('output').innerHTML = `
       <div class="result-block">
         <div class="result-label">目前殖利率</div>
@@ -381,18 +480,9 @@
       </div>
       <div class="result-block" style="margin-bottom:0">
         <div class="result-label">配息明細</div>
-        <div class="detail-row">
-          <span class="detail-key">票面年配息</span>
-          <span class="detail-val">$${annualDiv.toFixed(4)}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-key">每季配息（估）</span>
-          <span class="detail-val">$${quarterDiv.toFixed(4)}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-key">買入價格</span>
-          <span class="detail-val">$${price.toFixed(2)}</span>
-        </div>
+        <div class="detail-row"><span class="detail-key">票面年配息</span><span class="detail-val">$${annualDiv.toFixed(4)}</span></div>
+        <div class="detail-row"><span class="detail-key">每季配息（估）</span><span class="detail-val">$${quarterDiv.toFixed(4)}</span></div>
+        <div class="detail-row"><span class="detail-key">買入價格</span><span class="detail-val">$${price.toFixed(2)}</span></div>
         <div class="detail-row">
           <span class="detail-key">相對票面溢/折價</span>
           <span class="detail-val" style="color:${premium >= 0 ? '#f87171' : '#4ade80'}">
@@ -406,8 +496,7 @@
     document.getElementById('output').innerHTML = '<div class="empty-state">輸入數值後自動顯示結果</div>';
   }
 
-  /* ── 手動模式監聽 ── */
-  ['m-price', 'm-rate'].forEach(id =>
+  ['m-price','m-rate'].forEach(id =>
     document.getElementById(id).addEventListener('input', () => {
       if (currentMode !== 'manual') return;
       renderResult(
@@ -417,8 +506,8 @@
     })
   );
 
-  /* ── 自動模式監聽 ── */
-  ['a-price', 'a-rate'].forEach(id =>
+  /* ── 自動模式 ── */
+  ['a-price','a-rate'].forEach(id =>
     document.getElementById(id).addEventListener('input', () => {
       if (currentMode !== 'auto') return;
       renderResult(
@@ -428,45 +517,11 @@
     })
   );
 
-  /* Enter 鍵觸發查詢 */
   document.getElementById('a-ticker').addEventListener('keydown', e => {
-    if (e.key === 'Enter') fetchQuote();
+    if (e.key === 'Enter') fetchSingle();
   });
 
-  /* ── 自動查詢（多 proxy + 雙 API 備援） ── */
-
-  // corsproxy.io 用 raw URL（不 encode），其他用 encoded
-  const PROXIES = [
-    url => `https://corsproxy.io/?${url}`,
-    url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-    url => `https://thingproxy.freeboard.io/fetch/${url}`,
-  ];
-
-  async function tryFetch(apiUrl) {
-    for (const makeProxy of PROXIES) {
-      try {
-        const res = await fetch(makeProxy(apiUrl), { signal: AbortSignal.timeout(8000) });
-        if (!res.ok) continue;
-        const text = await res.text();
-        if (!text || text[0] === '<') continue; // HTML error page
-        const json = JSON.parse(text);
-        const chart = json?.chart?.result?.[0];
-        if (chart?.meta) return {
-          name:  chart.meta.longName || chart.meta.shortName,
-          price: chart.meta.regularMarketPrice
-        };
-        const quote = json?.quoteResponse?.result?.[0];
-        if (quote) return {
-          name:  quote.longName || quote.shortName,
-          price: quote.regularMarketPrice
-        };
-      } catch (_) { /* try next */ }
-    }
-    return null;
-  }
-
-  async function fetchQuote() {
+  async function fetchSingle() {
     const ticker = document.getElementById('a-ticker').value.trim().toUpperCase();
     if (!ticker) return;
 
@@ -483,33 +538,25 @@
     resetOutput();
 
     try {
-      // v8 chart（ticker 在 path，proxy 最友善）
       const v8 = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`;
       const v7 = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${ticker}&fields=longName,shortName,regularMarketPrice`;
 
       let result = await tryFetch(v8);
       if (!result) result = await tryFetch(v7);
-
-      if (!result) {
-        throw new Error(`無法取得「${ticker}」的資料。\n請確認 Yahoo Finance 上的代號格式，例如部分特別股需寫成 TICKER-PA 或 TICKERP。`);
-      }
+      if (!result) throw new Error(`無法取得「${ticker}」的資料，請確認代號格式（例：部分特別股在 Yahoo Finance 寫成 TICKER-PA 而非 TICKER-A）`);
 
       const { name, price } = result;
-      const rateMatch  = (name || '').match(/(\d+\.?\d+)\s*%/);
-      const parsedRate = rateMatch ? parseFloat(rateMatch[1]) : null;
+      const parsedRate = parseRate(name);
 
-      document.getElementById('stock-name-text').innerHTML =
-        `<strong>${ticker}</strong> &nbsp;—&nbsp; ${name || '（名稱未知）'}`;
+      document.getElementById('stock-name-text').innerHTML = `<strong>${ticker}</strong> &nbsp;—&nbsp; ${name || '（名稱未知）'}`;
       document.getElementById('rate-tag').innerHTML = parsedRate
         ? `<span class="stock-highlight">解析股息率：${parsedRate}%</span>`
-        : `<span style="color:#fbbf24;font-size:0.78rem;">⚠ 名稱中未找到股息率，請手動輸入</span>`;
+        : `<span style="color:#fbbf24;font-size:0.75rem">⚠ 名稱中未找到股息率，請手動輸入</span>`;
 
       infoBox.classList.add('show');
       autoFields.style.display = '';
-
-      document.getElementById('a-price').value = price ? price.toFixed(2) : '';
+      document.getElementById('a-price').value = price  ? price.toFixed(2) : '';
       document.getElementById('a-rate').value  = parsedRate || '';
-
       if (price && parsedRate) renderResult(price, parsedRate);
 
     } catch (err) {
@@ -519,6 +566,128 @@
       btn.disabled = false;
       btn.textContent = '查詢';
     }
+  }
+
+  /* ── 推薦模式 ── */
+  async function loadWatchlist(force = false) {
+    if (watchlistCache && !force) {
+      renderWatchlist(watchlistCache);
+      return;
+    }
+
+    document.getElementById('output').innerHTML = `
+      <div class="wl-loading"><span class="spinner" style="border-top-color:#6366f1"></span> 載入 ${WATCHLIST.length} 檔資料中...</div>`;
+
+    try {
+      // 對有 -X 格式的 ticker 也試 -PX 格式
+      const expanded = [];
+      const altMap = {};
+      WATCHLIST.forEach(t => {
+        expanded.push(t);
+        const m = t.match(/^(.+)-([A-Z])$/);
+        if (m) {
+          const alt = `${m[1]}-P${m[2]}`;
+          expanded.push(alt);
+          altMap[alt] = t; // alt → original
+        }
+      });
+
+      const symbols = [...new Set(expanded)].join(',');
+      let results = await tryBatchFetch(symbols);
+
+      if (!results || results.length === 0) {
+        // Fallback: fetch individually
+        results = [];
+        for (const t of WATCHLIST) {
+          const r = await tryFetch(`https://query1.finance.yahoo.com/v8/finance/chart/${t}`);
+          if (r) results.push({ symbol: t, longName: r.name, regularMarketPrice: r.price });
+        }
+      }
+
+      if (!results || results.length === 0) throw new Error('所有代理伺服器皆失敗，請稍後再試');
+
+      // Build symbol → data map (handle alt formats)
+      const map = {};
+      results.forEach(r => {
+        if (!r?.symbol) return;
+        map[r.symbol] = r;
+        const orig = altMap[r.symbol];
+        if (orig) map[orig] = r; // map alt back to original
+      });
+
+      watchlistCache = map;
+      renderWatchlist(map);
+
+    } catch (err) {
+      document.getElementById('output').innerHTML = `
+        <div class="wl-loading" style="color:#f87171">
+          載入失敗：${err.message}<br><br>
+          <button class="refresh-btn" onclick="loadWatchlist(true)">重試</button>
+        </div>`;
+    }
+  }
+
+  function renderWatchlist(map) {
+    const rows = WATCHLIST.map(ticker => {
+      const r = map[ticker];
+      const name  = r?.longName || r?.shortName || '';
+      const price = r?.regularMarketPrice ?? null;
+      const rate  = parseRate(name);
+      const yld   = calcYield(price, rate);
+      return { ticker, name, price, rate, yld };
+    });
+
+    // Sort by yield desc, nulls last
+    rows.sort((a, b) => {
+      if (a.yld == null && b.yld == null) return 0;
+      if (a.yld == null) return 1;
+      if (b.yld == null) return -1;
+      return b.yld - a.yld;
+    });
+
+    const fmt = v => v != null ? v : null;
+
+    const tbody = rows.map((row, i) => {
+      const yldTd = row.yld != null
+        ? `<td class="${yieldClass(row.yld)}">${row.yld.toFixed(2)}%</td>`
+        : `<td class="wl-dash">—</td>`;
+      const rateTd = row.rate != null
+        ? `<td class="wl-rate">${row.rate}%</td>`
+        : `<td class="wl-dash">—</td>`;
+      const priceTd = row.price != null
+        ? `<td class="wl-price">$${row.price.toFixed(2)}</td>`
+        : `<td class="wl-dash">—</td>`;
+      return `
+        <tr>
+          <td class="wl-rank">${i + 1}</td>
+          <td class="wl-ticker">${row.ticker}</td>
+          ${priceTd}${rateTd}${yldTd}
+        </tr>`;
+    }).join('');
+
+    const now = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+    const loaded = rows.filter(r => r.price != null).length;
+
+    document.getElementById('output').innerHTML = `
+      <div class="wl-header">
+        <span class="wl-meta">推薦 ${WATCHLIST.length} 檔 &nbsp;|&nbsp; 已載入 ${loaded} 筆</span>
+        <button class="refresh-btn" id="reload-btn" onclick="loadWatchlist(true)">↺ 重新整理</button>
+      </div>
+      <div class="wl-wrap">
+        <table class="wl-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>代號</th>
+              <th>現價</th>
+              <th>股息率</th>
+              <th>殖利率</th>
+            </tr>
+          </thead>
+          <tbody>${tbody}</tbody>
+        </table>
+      </div>
+      <div class="wl-updated">更新 ${now}</div>`;
   }
 </script>
 
