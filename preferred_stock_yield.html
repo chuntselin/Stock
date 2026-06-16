@@ -434,25 +434,33 @@
   });
 
   /* ── 自動查詢（多 proxy + 雙 API 備援） ── */
+
+  // corsproxy.io 用 raw URL（不 encode），其他用 encoded
   const PROXIES = [
-    url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    url => `https://corsproxy.io/?${url}`,
     url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
     url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    url => `https://thingproxy.freeboard.io/fetch/${url}`,
   ];
 
   async function tryFetch(apiUrl) {
     for (const makeProxy of PROXIES) {
       try {
-        const res = await fetch(makeProxy(apiUrl), { signal: AbortSignal.timeout(7000) });
+        const res = await fetch(makeProxy(apiUrl), { signal: AbortSignal.timeout(8000) });
         if (!res.ok) continue;
         const text = await res.text();
+        if (!text || text[0] === '<') continue; // HTML error page
         const json = JSON.parse(text);
-        // v8 chart
         const chart = json?.chart?.result?.[0];
-        if (chart) return { name: chart.meta?.longName || chart.meta?.shortName, price: chart.meta?.regularMarketPrice };
-        // v7 quote
+        if (chart?.meta) return {
+          name:  chart.meta.longName || chart.meta.shortName,
+          price: chart.meta.regularMarketPrice
+        };
         const quote = json?.quoteResponse?.result?.[0];
-        if (quote) return { name: quote.longName || quote.shortName, price: quote.regularMarketPrice };
+        if (quote) return {
+          name:  quote.longName || quote.shortName,
+          price: quote.regularMarketPrice
+        };
       } catch (_) { /* try next */ }
     }
     return null;
@@ -475,13 +483,16 @@
     resetOutput();
 
     try {
-      // 嘗試 v8 chart 再 v7 quote
-      const v8  = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}`;
-      const v7  = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(ticker)}`;
+      // v8 chart（ticker 在 path，proxy 最友善）
+      const v8 = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`;
+      const v7 = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${ticker}&fields=longName,shortName,regularMarketPrice`;
 
       let result = await tryFetch(v8);
       if (!result) result = await tryFetch(v7);
-      if (!result) throw new Error('所有來源皆無法取得資料，請確認代號（如 ATLCZ、PSEC-A）');
+
+      if (!result) {
+        throw new Error(`無法取得「${ticker}」的資料。\n請確認 Yahoo Finance 上的代號格式，例如部分特別股需寫成 TICKER-PA 或 TICKERP。`);
+      }
 
       const { name, price } = result;
       const rateMatch  = (name || '').match(/(\d+\.?\d+)\s*%/);
@@ -496,13 +507,13 @@
       infoBox.classList.add('show');
       autoFields.style.display = '';
 
-      document.getElementById('a-price').value = price  ? price.toFixed(2) : '';
+      document.getElementById('a-price').value = price ? price.toFixed(2) : '';
       document.getElementById('a-rate').value  = parsedRate || '';
 
       if (price && parsedRate) renderResult(price, parsedRate);
 
     } catch (err) {
-      errorBox.textContent = `查詢失敗：${err.message}`;
+      errorBox.innerHTML = err.message.replace(/\n/g, '<br>');
       errorBox.classList.add('show');
     } finally {
       btn.disabled = false;
