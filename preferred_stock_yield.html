@@ -65,7 +65,6 @@
       transition: all 0.2s;
       white-space: nowrap;
     }
-
     .mode-btn.active { background: #6366f1; color: #fff; }
 
     .subtitle {
@@ -175,7 +174,6 @@
       margin: 20px 0;
     }
 
-    /* ── Manual/Auto result ── */
     .result-block {
       background: #0f172a;
       border-radius: 12px;
@@ -221,10 +219,9 @@
 
     .spinner {
       display: inline-block;
-      width: 13px;
-      height: 13px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: #fff;
+      width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: #6366f1;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
       margin-right: 5px;
@@ -232,7 +229,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Watchlist table ── */
+    /* ── Watchlist ── */
     .wl-header {
       display: flex;
       justify-content: space-between;
@@ -252,17 +249,13 @@
       transition: all 0.2s;
     }
     .refresh-btn:hover { background: #334155; color: #e2e8f0; }
-    .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .wl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-    .wl-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.84rem;
-    }
+    .wl-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
     .wl-table thead th {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 600;
       color: #64748b;
       text-transform: uppercase;
@@ -272,16 +265,16 @@
       white-space: nowrap;
     }
     .wl-table thead th:nth-child(n+3) { text-align: right; }
-    .wl-table tbody tr { border-bottom: 1px solid #1e293b; cursor: default; }
+    .wl-table tbody tr { border-bottom: 1px solid #1e293b; }
     .wl-table tbody tr:last-child { border-bottom: none; }
     .wl-table tbody tr:hover { background: rgba(255,255,255,0.02); }
-    .wl-table td { padding: 9px 6px; vertical-align: middle; }
+    .wl-table td { padding: 8px 6px; vertical-align: middle; }
     .wl-table td:nth-child(n+3) { text-align: right; }
 
-    .wl-rank { color: #475569; font-size: 0.72rem; padding-right: 2px; }
-    .wl-ticker { font-weight: 700; color: #e2e8f0; font-size: 0.82rem; white-space: nowrap; }
-    .wl-price { color: #94a3b8; font-size: 0.82rem; }
-    .wl-rate  { color: #94a3b8; font-size: 0.82rem; }
+    .wl-rank  { color: #475569; font-size: 0.7rem; }
+    .wl-ticker { font-weight: 700; color: #e2e8f0; font-size: 0.81rem; white-space: nowrap; }
+    .wl-price  { color: #94a3b8; font-size: 0.81rem; }
+    .wl-rate   { color: #64748b; font-size: 0.81rem; }
     .wl-y-hi { color: #4ade80; font-weight: 700; }
     .wl-y-md { color: #fbbf24; font-weight: 700; }
     .wl-y-lo { color: #f87171; font-weight: 600; }
@@ -293,11 +286,10 @@
       color: #64748b;
       font-size: 0.88rem;
     }
-    .wl-updated { font-size: 0.7rem; color: #334155; margin-top: 10px; text-align: right; }
+    .wl-updated { font-size: 0.68rem; color: #334155; margin-top: 10px; text-align: right; }
   </style>
 </head>
 <body>
-
 <div class="card">
   <div class="header">
     <h1>特別股殖利率</h1>
@@ -360,7 +352,6 @@
     </div>
   </div>
 
-  <!-- ── 分隔線 + 結果 ── -->
   <hr class="divider" id="main-divider">
   <div id="output">
     <div class="empty-state">輸入數值後自動顯示結果</div>
@@ -369,12 +360,27 @@
 
 <script>
   let currentMode = 'manual';
-  let watchlistCache = null;
+  let watchlistLoaded = false;
 
+  /* ── 推薦清單（代號、Yahoo代號、簡稱、配息率均已預先驗證） ── */
   const WATCHLIST = [
-    'TRTN-G','UZF','SEAL-B','GLOP-A','ATLCZ',
-    'TEN-E','DCBG','FGN','APOS','ATHS',
-    'AQNB','MGRE','F-D','HWCPZ','AFGD','PBI-B','JSM'
+    { d:'TRTN-G', y:'TRTN-PG', n:'Triton Intl. Pfd G',          r:7.50  },
+    { d:'UZF',    y:'UZF',     n:'Array Digital 5.50% 2070',     r:5.50  },
+    { d:'SEAL-B', y:'SEAL-PB', n:'Seapeak LLC Pfd B',            r:8.50  },
+    { d:'GLOP-A', y:'GLOP-PA', n:'GasLog Partners Pfd A',        r:8.625 },
+    { d:'ATLCZ',  y:'ATLCZ',   n:'Atlanticus 9.25% 2029',        r:9.25  },
+    { d:'TEN-E',  y:'TEN-PE',  n:'Tsakos Energy Pfd E',          r:9.25  },
+    { d:'DCBG',   y:'DCBG',    n:'Dime Community 9.00% 2034',    r:9.00  },
+    { d:'FGN',    y:'FGN',     n:'F&G Annuities 7.95% 2053',     r:7.95  },
+    { d:'APOS',   y:'APOS',    n:'Apollo Global 7.625% 2053',    r:7.625 },
+    { d:'ATHS',   y:'ATHS',    n:'Athene Holding 7.25% 2064',    r:7.25  },
+    { d:'AQNB',   y:'AQNB',    n:'Algonquin Power 6.20% 2079',   r:6.20  },
+    { d:'MGRE',   y:'MGRE',    n:'Aff. Managers 6.75% 2064',     r:6.75  },
+    { d:'F-D',    y:'F-PD',    n:'Ford Motor 6.50% 2062',        r:6.50  },
+    { d:'HWCPZ',  y:'HWCPZ',   n:'Hancock Whitney 6.25% 2060',   r:6.25  },
+    { d:'AFGD',   y:'AFGD',    n:'American Financial 5.625% 2060',r:5.625 },
+    { d:'PBI-B',  y:'PBI-PB',  n:'Pitney Bowes 6.70% 2043',      r:6.70  },
+    { d:'JSM',    y:'JSM',     n:'Navient 6.00% 2043',           r:6.00  },
   ];
 
   /* ── 模式切換 ── */
@@ -383,13 +389,11 @@
     document.getElementById('panel-manual').style.display = m === 'manual' ? '' : 'none';
     document.getElementById('panel-auto').style.display   = m === 'auto'   ? '' : 'none';
     document.getElementById('main-divider').style.display = m === 'watchlist' ? 'none' : '';
-
     ['manual','auto','watchlist'].forEach(k =>
-      document.getElementById('btn-' + k).classList.toggle('active', k === m)
+      document.getElementById('btn-'+k).classList.toggle('active', k === m)
     );
     document.getElementById('mode-label').textContent =
-      { manual: '手動輸入', auto: '自動查詢', watchlist: '推薦標的' }[m];
-
+      { manual:'手動輸入', auto:'自動查詢', watchlist:'推薦標的' }[m];
     if (m === 'watchlist') {
       loadWatchlist();
     } else {
@@ -397,7 +401,7 @@
     }
   }
 
-  /* ── Proxy 列表 ── */
+  /* ── CORS Proxies ── */
   const PROXIES = [
     u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
     u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
@@ -405,59 +409,17 @@
     u => `https://thingproxy.freeboard.io/fetch/${u}`,
   ];
 
-  async function tryFetch(apiUrl) {
-    for (const mkProxy of PROXIES) {
+  async function tryProxies(apiUrl, timeout = 10000) {
+    for (const mk of PROXIES) {
       try {
-        const res = await fetch(mkProxy(apiUrl), { signal: AbortSignal.timeout(8000) });
+        const res = await fetch(mk(apiUrl), { signal: AbortSignal.timeout(timeout) });
         if (!res.ok) continue;
         const text = await res.text();
         if (!text || text[0] === '<') continue;
-        const json = JSON.parse(text);
-        // v8 chart
-        const chart = json?.chart?.result?.[0];
-        if (chart?.meta?.regularMarketPrice != null) return {
-          name:  chart.meta.longName || chart.meta.shortName,
-          price: chart.meta.regularMarketPrice
-        };
-        // v7 quote (single)
-        const q = json?.quoteResponse?.result?.[0];
-        if (q?.regularMarketPrice != null) return {
-          name:  q.longName || q.shortName,
-          price: q.regularMarketPrice
-        };
+        return JSON.parse(text);
       } catch (_) {}
     }
     return null;
-  }
-
-  async function tryBatchFetch(symbols) {
-    const url = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbols)}&fields=longName,shortName,regularMarketPrice`;
-    for (const mkProxy of PROXIES) {
-      try {
-        const res = await fetch(mkProxy(url), { signal: AbortSignal.timeout(15000) });
-        if (!res.ok) continue;
-        const text = await res.text();
-        if (!text || text[0] === '<') continue;
-        const json = JSON.parse(text);
-        const results = json?.quoteResponse?.result;
-        if (Array.isArray(results) && results.length > 0) return results;
-      } catch (_) {}
-    }
-    return null;
-  }
-
-  /* ── 殖利率計算 helpers ── */
-  function parseRate(name) {
-    const m = (name || '').match(/(\d+\.?\d+)\s*%/);
-    return m ? parseFloat(m[1]) : null;
-  }
-
-  function calcYield(price, rate) {
-    return (price && rate) ? (25 * rate / 100) / price * 100 : null;
-  }
-
-  function yieldClass(y) {
-    return y >= 9 ? 'wl-y-hi' : y >= 7 ? 'wl-y-md' : 'wl-y-lo';
   }
 
   /* ── 手動模式 ── */
@@ -471,8 +433,8 @@
     if (!price || !rate || price <= 0 || rate <= 0) { resetOutput(); return; }
     const annualDiv    = 25 * (rate / 100);
     const quarterDiv   = annualDiv / 4;
-    const currentYield = (annualDiv / price) * 100;
-    const premium      = ((price - 25) / 25) * 100;
+    const currentYield = annualDiv / price * 100;
+    const premium      = (price - 25) / 25 * 100;
     document.getElementById('output').innerHTML = `
       <div class="result-block">
         <div class="result-label">目前殖利率</div>
@@ -485,8 +447,8 @@
         <div class="detail-row"><span class="detail-key">買入價格</span><span class="detail-val">$${price.toFixed(2)}</span></div>
         <div class="detail-row">
           <span class="detail-key">相對票面溢/折價</span>
-          <span class="detail-val" style="color:${premium >= 0 ? '#f87171' : '#4ade80'}">
-            ${premium >= 0 ? '+' : ''}${premium.toFixed(2)}%
+          <span class="detail-val" style="color:${premium >= 0 ? '#f87171':'#4ade80'}">
+            ${premium >= 0 ? '+':''}${premium.toFixed(2)}%
           </span>
         </div>
       </div>`;
@@ -524,10 +486,9 @@
   async function fetchSingle() {
     const ticker = document.getElementById('a-ticker').value.trim().toUpperCase();
     if (!ticker) return;
-
-    const btn        = document.getElementById('fetch-btn');
-    const errorBox   = document.getElementById('error-box');
-    const infoBox    = document.getElementById('stock-info');
+    const btn = document.getElementById('fetch-btn');
+    const errorBox = document.getElementById('error-box');
+    const infoBox  = document.getElementById('stock-info');
     const autoFields = document.getElementById('auto-fields');
 
     btn.disabled = true;
@@ -538,29 +499,34 @@
     resetOutput();
 
     try {
-      const v8 = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`;
-      const v7 = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${ticker}&fields=longName,shortName,regularMarketPrice`;
+      let data = await tryProxies(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`);
+      let name, price;
+      if (data?.chart?.result?.[0]?.meta?.regularMarketPrice != null) {
+        const m = data.chart.result[0].meta;
+        name = m.longName || m.shortName; price = m.regularMarketPrice;
+      } else {
+        data = await tryProxies(`https://query2.finance.yahoo.com/v7/finance/quote?symbols=${ticker}&fields=longName,shortName,regularMarketPrice`);
+        const q = data?.quoteResponse?.result?.[0];
+        if (q?.regularMarketPrice != null) { name = q.longName||q.shortName; price = q.regularMarketPrice; }
+        else throw new Error(`找不到「${ticker}」，請確認代號格式`);
+      }
 
-      let result = await tryFetch(v8);
-      if (!result) result = await tryFetch(v7);
-      if (!result) throw new Error(`無法取得「${ticker}」的資料，請確認代號格式（例：部分特別股在 Yahoo Finance 寫成 TICKER-PA 而非 TICKER-A）`);
+      const rateMatch = (name||'').match(/(\d+\.?\d+)\s*%/);
+      const parsedRate = rateMatch ? parseFloat(rateMatch[1]) : null;
 
-      const { name, price } = result;
-      const parsedRate = parseRate(name);
-
-      document.getElementById('stock-name-text').innerHTML = `<strong>${ticker}</strong> &nbsp;—&nbsp; ${name || '（名稱未知）'}`;
+      document.getElementById('stock-name-text').innerHTML = `<strong>${ticker}</strong> &nbsp;—&nbsp; ${name||'（名稱未知）'}`;
       document.getElementById('rate-tag').innerHTML = parsedRate
         ? `<span class="stock-highlight">解析股息率：${parsedRate}%</span>`
         : `<span style="color:#fbbf24;font-size:0.75rem">⚠ 名稱中未找到股息率，請手動輸入</span>`;
 
       infoBox.classList.add('show');
       autoFields.style.display = '';
-      document.getElementById('a-price').value = price  ? price.toFixed(2) : '';
+      document.getElementById('a-price').value = price ? price.toFixed(2) : '';
       document.getElementById('a-rate').value  = parsedRate || '';
       if (price && parsedRate) renderResult(price, parsedRate);
 
     } catch (err) {
-      errorBox.innerHTML = err.message.replace(/\n/g, '<br>');
+      errorBox.innerHTML = err.message;
       errorBox.classList.add('show');
     } finally {
       btn.disabled = false;
@@ -568,128 +534,81 @@
     }
   }
 
-  /* ── 推薦模式 ── */
+  /* ── 推薦模式：只抓價格，配息率已預存 ── */
   async function loadWatchlist(force = false) {
-    if (watchlistCache && !force) {
-      renderWatchlist(watchlistCache);
-      return;
-    }
+    if (watchlistLoaded && !force) return;
 
-    document.getElementById('output').innerHTML = `
-      <div class="wl-loading"><span class="spinner" style="border-top-color:#6366f1"></span> 載入 ${WATCHLIST.length} 檔資料中...</div>`;
+    const out = document.getElementById('output');
+    out.innerHTML = `<div class="wl-loading"><span class="spinner"></span> 批次查詢 ${WATCHLIST.length} 檔現價中…</div>`;
 
+    const yahooSymbols = WATCHLIST.map(s => s.y).join(',');
+    const apiUrl = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(yahooSymbols)}&fields=regularMarketPrice`;
+
+    const priceMap = {};
     try {
-      // 對有 -X 格式的 ticker 也試 -PX 格式
-      const expanded = [];
-      const altMap = {};
-      WATCHLIST.forEach(t => {
-        expanded.push(t);
-        const m = t.match(/^(.+)-([A-Z])$/);
-        if (m) {
-          const alt = `${m[1]}-P${m[2]}`;
-          expanded.push(alt);
-          altMap[alt] = t; // alt → original
-        }
-      });
-
-      const symbols = [...new Set(expanded)].join(',');
-      let results = await tryBatchFetch(symbols);
-
-      if (!results || results.length === 0) {
-        // Fallback: fetch individually
-        results = [];
-        for (const t of WATCHLIST) {
-          const r = await tryFetch(`https://query1.finance.yahoo.com/v8/finance/chart/${t}`);
-          if (r) results.push({ symbol: t, longName: r.name, regularMarketPrice: r.price });
-        }
+      const json = await tryProxies(apiUrl, 15000);
+      const results = json?.quoteResponse?.result;
+      if (Array.isArray(results)) {
+        results.forEach(r => {
+          if (r?.symbol && r?.regularMarketPrice != null) priceMap[r.symbol] = r.regularMarketPrice;
+        });
       }
+    } catch (_) {}
 
-      if (!results || results.length === 0) throw new Error('所有代理伺服器皆失敗，請稍後再試');
-
-      // Build symbol → data map (handle alt formats)
-      const map = {};
-      results.forEach(r => {
-        if (!r?.symbol) return;
-        map[r.symbol] = r;
-        const orig = altMap[r.symbol];
-        if (orig) map[orig] = r; // map alt back to original
-      });
-
-      watchlistCache = map;
-      renderWatchlist(map);
-
-    } catch (err) {
-      document.getElementById('output').innerHTML = `
-        <div class="wl-loading" style="color:#f87171">
-          載入失敗：${err.message}<br><br>
-          <button class="refresh-btn" onclick="loadWatchlist(true)">重試</button>
-        </div>`;
+    // 如果批次失敗，逐筆補抓
+    const missing = WATCHLIST.filter(s => priceMap[s.y] == null);
+    if (missing.length > 0 && missing.length < WATCHLIST.length) {
+      await Promise.allSettled(missing.map(async s => {
+        const j = await tryProxies(`https://query1.finance.yahoo.com/v8/finance/chart/${s.y}`, 8000);
+        const p = j?.chart?.result?.[0]?.meta?.regularMarketPrice;
+        if (p != null) priceMap[s.y] = p;
+      }));
     }
+
+    renderWatchlist(priceMap, out);
+    watchlistLoaded = true;
   }
 
-  function renderWatchlist(map) {
-    const rows = WATCHLIST.map(ticker => {
-      const r = map[ticker];
-      const name  = r?.longName || r?.shortName || '';
-      const price = r?.regularMarketPrice ?? null;
-      const rate  = parseRate(name);
-      const yld   = calcYield(price, rate);
-      return { ticker, name, price, rate, yld };
-    });
-
-    // Sort by yield desc, nulls last
-    rows.sort((a, b) => {
+  function renderWatchlist(priceMap, container) {
+    const rows = WATCHLIST.map(s => {
+      const price = priceMap[s.y] ?? null;
+      const yld   = price ? (25 * s.r / 100) / price * 100 : null;
+      return { ...s, price, yld };
+    }).sort((a, b) => {
       if (a.yld == null && b.yld == null) return 0;
       if (a.yld == null) return 1;
       if (b.yld == null) return -1;
       return b.yld - a.yld;
     });
 
-    const fmt = v => v != null ? v : null;
-
-    const tbody = rows.map((row, i) => {
-      const yldTd = row.yld != null
-        ? `<td class="${yieldClass(row.yld)}">${row.yld.toFixed(2)}%</td>`
-        : `<td class="wl-dash">—</td>`;
-      const rateTd = row.rate != null
-        ? `<td class="wl-rate">${row.rate}%</td>`
-        : `<td class="wl-dash">—</td>`;
-      const priceTd = row.price != null
-        ? `<td class="wl-price">$${row.price.toFixed(2)}</td>`
-        : `<td class="wl-dash">—</td>`;
-      return `
-        <tr>
-          <td class="wl-rank">${i + 1}</td>
-          <td class="wl-ticker">${row.ticker}</td>
-          ${priceTd}${rateTd}${yldTd}
-        </tr>`;
-    }).join('');
-
-    const now = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+    const yClass = y => y >= 9 ? 'wl-y-hi' : y >= 7 ? 'wl-y-md' : 'wl-y-lo';
     const loaded = rows.filter(r => r.price != null).length;
+    const now = new Date().toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit' });
 
-    document.getElementById('output').innerHTML = `
+    const tbody = rows.map((row, i) => `
+      <tr>
+        <td class="wl-rank">${i+1}</td>
+        <td class="wl-ticker">${row.d}</td>
+        <td class="wl-price">${row.price != null ? '$'+row.price.toFixed(2) : '<span class="wl-dash">—</span>'}</td>
+        <td class="wl-rate">${row.r}%</td>
+        <td class="${row.yld != null ? yClass(row.yld) : 'wl-dash'}">${row.yld != null ? row.yld.toFixed(2)+'%' : '—'}</td>
+      </tr>`).join('');
+
+    container.innerHTML = `
       <div class="wl-header">
-        <span class="wl-meta">推薦 ${WATCHLIST.length} 檔 &nbsp;|&nbsp; 已載入 ${loaded} 筆</span>
-        <button class="refresh-btn" id="reload-btn" onclick="loadWatchlist(true)">↺ 重新整理</button>
+        <span class="wl-meta">17 檔推薦 &nbsp;|&nbsp; 已取得 ${loaded} 筆</span>
+        <button class="refresh-btn" onclick="watchlistLoaded=false;loadWatchlist(true)">↺ 重新整理</button>
       </div>
       <div class="wl-wrap">
         <table class="wl-table">
           <thead>
-            <tr>
-              <th>#</th>
-              <th>代號</th>
-              <th>現價</th>
-              <th>股息率</th>
-              <th>殖利率</th>
-            </tr>
+            <tr><th>#</th><th>代號</th><th>現價</th><th>股息率</th><th>殖利率</th></tr>
           </thead>
           <tbody>${tbody}</tbody>
         </table>
       </div>
-      <div class="wl-updated">更新 ${now}</div>`;
+      <div class="wl-updated">更新 ${now} &nbsp;|&nbsp; 配息率來源：QuantumOnline / SEC</div>`;
   }
 </script>
-
 </body>
 </html>
