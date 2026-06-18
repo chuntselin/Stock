@@ -381,6 +381,8 @@
     { d:'AFGD',   y:'AFGD',    n:'American Financial 5.625% 2060',r:5.625 },
     { d:'PBI-B',  y:'PBI-PB',  n:'Pitney Bowes 6.70% 2043',      r:6.70  },
     { d:'JSM',    y:'JSM',     n:'Navient 6.00% 2043',           r:6.00  },
+    { d:'CTGG',   y:'CTGG',    n:'Qwest/Lumen 6.50% 2051',       r:6.50  },
+    { d:'CTHH',   y:'CTHH',    n:'Qwest/Lumen 6.75% 2052',       r:6.75  },
   ];
 
   /* ── 模式切換 ── */
@@ -539,7 +541,7 @@
     if (watchlistLoaded && !force) return;
 
     const out = document.getElementById('output');
-    out.innerHTML = `<div class="wl-loading"><span class="spinner"></span> 批次查詢 ${WATCHLIST.length} 檔現價中…</div>`;
+    out.innerHTML = `<div class="wl-loading"><span class="spinner"></span> 批次查詢 19 檔現價中…</div>`;
 
     const yahooSymbols = WATCHLIST.map(s => s.y).join(',');
     const apiUrl = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(yahooSymbols)}&fields=regularMarketPrice`;
@@ -596,7 +598,7 @@
 
     container.innerHTML = `
       <div class="wl-header">
-        <span class="wl-meta">17 檔推薦 &nbsp;|&nbsp; 已取得 ${loaded} 筆</span>
+        <span class="wl-meta">19 檔推薦 &nbsp;|&nbsp; 已取得 ${loaded} 筆</span>
         <button class="refresh-btn" onclick="watchlistLoaded=false;loadWatchlist(true)">↺ 重新整理</button>
       </div>
       <div class="wl-wrap">
